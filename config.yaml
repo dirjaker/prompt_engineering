@@ -1,0 +1,41 @@
+# Prompt 工程平台配置
+app:
+  name: "Prompt Engineering Platform"
+  version: "1.0.0"
+  host: "0.0.0.0"
+  port: 8000
+  debug: true
+
+database:
+  path: "data/prompts.db"
+
+template:
+  max_length: 10000        # 模板最大字符数
+  max_variables: 50        # 最大变量数
+  strict_mode: true        # 严格模式: 未定义变量报错
+
+evaluation:
+  default_metrics:
+    - accuracy
+    - relevance
+    - format
+    - fluency
+    - completeness
+  simulation_mode: true     # 模拟模式: 不调用真实 LLM
+  default_sample_size: 10   # A/B 测试默认每组样本量
+  max_sample_size: 1000     # 最大样本量
+
+defaults:
+  model: "gpt-4"
+  temperature: 0.7
+  max_tokens: 2048
+
+categories:
+  - general
+  - summarization
+  - translation
+  - code_generation
+  - data_analysis
+  - creative_writing
+  - qa
+  - classification
