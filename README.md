@@ -1,3 +1,20 @@
+<div align="center">
+
+# 🎯 Prompt Engineering
+
+### Prompt 工程实战合集
+
+[![技巧](https://img.shields.io/badge/技巧-15+-blue?style=flat-square)]()
+[![模板](https://img.shields.io/badge/模板-10+-green?style=flat-square)]()
+[![框架](https://img.shields.io/badge/框架-LangChain-orange?style=flat-square)]()
+[![更新](https://img.shields.io/badge/更新-2025.06-red?style=flat-square)]()
+
+*CoT · Few-Shot · 结构化输出 · 防注入 · 自动优化 · 生产最佳实践*
+
+</div>
+
+---
+
 # ⚡ Prompt Engineering Platform
 
 > 企业级 Prompt 管理平台 — 模板引擎 · 版本控制 · A/B 测试 · 效果评估
@@ -272,3 +289,4 @@ prompt_engineering/
 ## 📄 License
 
 MIT
+
