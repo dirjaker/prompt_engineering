@@ -290,3 +290,37 @@ prompt_engineering/
 
 MIT
 
+
+---
+
+## Web Dashboard
+
+A management dashboard at `src/web/` for the Prompt Engineering Platform.
+
+```bash
+python src/web/app.py
+```
+
+Dashboard features:
+- Prompt CRUD with search and filtering
+- Evaluation results with visual score bars
+- A/B test management
+- Platform statistics overview
+- Create prompts with Jinja2 templates
+
+Access at: `http://localhost:8080`
+
+## macOS Application
+
+A native macOS application via py2app.
+
+```bash
+python packaging/py2app_setup.py py2app
+# Output: dist/Prompt Engineering.app
+```
+
+Features:
+- Start/stop web server
+- Quick stats and prompt listing
+- Create prompts directly from GUI
+- Activity log

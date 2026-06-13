@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prompt Engineering Platform</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0d1117;--card:#161b22;--border:#30363d;--accent:#58a6ff;--text:#c9d1d9;--muted:#8b949e;--green:#3fb950;--red:#f85149;--orange:#d29922;--purple:#bc8cff;--radius:8px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.header{background:linear-gradient(135deg,#0d1117,#161b22);border-bottom:1px solid var(--border);padding:20px 32px;display:flex;align-items:center;justify-content:space-between}
+.header h1{font-size:22px;font-weight:600;color:var(--accent)}
+.header .sub{font-size:13px;color:var(--muted)}
+.container{max-width:1200px;margin:0 auto;padding:24px 32px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center}
+.stat-card .value{font-size:36px;font-weight:700;color:var(--accent)}
+.stat-card .label{font-size:13px;color:var(--muted);margin-top:4px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px}
+.card h2{font-size:16px;font-weight:600;color:var(--accent);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.form-group{margin-bottom:12px}
+.form-group label{display:block;font-size:13px;color:var(--muted);margin-bottom:4px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:14px;font-family:inherit}
+.form-group textarea{min-height:80px;resize:vertical;font-family:'SF Mono','Fira Code',monospace}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--accent)}
+.btn{padding:8px 20px;border:none;border-radius:6px;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{opacity:.85}
+.btn-danger{background:var(--red);color:#fff}
+.btn-green{background:var(--green);color:#fff}
+.btn-sm{padding:4px 12px;font-size:12px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+@media(max-width:768px){.grid-2{grid-template-columns:1fr}}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--border)}
+th{color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase}
+.badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600}
+.badge-active{background:rgba(63,185,80,.15);color:var(--green)}
+.badge-draft{background:rgba(210,153,34,.15);color:var(--orange)}
+.badge-archived{background:rgba(139,148,158,.15);color:var(--muted)}
+.score-bar{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.score-bar .bar{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.score-bar .fill{height:100%;border-radius:3px;transition:width .3s}
+.score-bar .score-val{font-size:12px;width:40px;text-align:right}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.tabs{display:flex;gap:4px;margin-bottom:16px}
+.tab{padding:8px 18px;border:1px solid var(--border);background:transparent;color:var(--muted);border-radius:6px;cursor:pointer;font-size:13px;transition:.2s}
+.tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.section{display:none}
+.section.active{display:block}
+.prompt-card{padding:12px;border:1px solid var(--border);border-radius:6px;margin-bottom:8px;cursor:pointer;transition:.15s}
+.prompt-card:hover{border-color:var(--accent);background:rgba(88,166,255,.04)}
+.prompt-card .name{font-weight:600;font-size:14px}
+.prompt-card .meta{font-size:12px;color:var(--muted);margin-top:2px}
+.empty{color:var(--muted);font-size:14px;padding:20px;text-align:center}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div><h1>Prompt Engineering</h1><div class="sub">Prompt management, evaluation, and A/B testing platform</div></div>
+</div>
+
+<div class="container">
+  <div class="stats" id="statsGrid">
+    <div class="stat-card"><div class="value" id="statPrompts">0</div><div class="label">Prompts</div></div>
+    <div class="stat-card"><div class="value" id="statVersions">0</div><div class="label">Versions</div></div>
+    <div class="stat-card"><div class="value" id="statEvals">0</div><div class="label">Evaluations</div></div>
+    <div class="stat-card"><div class="value" id="statTests">0</div><div class="label">A/B Tests</div></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchSection('prompts')">Prompts</button>
+    <button class="tab" onclick="switchSection('create')">Create Prompt</button>
+    <button class="tab" onclick="switchSection('evaluate')">Evaluate</button>
+    <button class="tab" onclick="switchSection('abtests')">A/B Tests</button>
+  </div>
+
+  <div id="sec-prompts" class="section active">
+    <div class="card">
+      <h2>Prompt List</h2>
+      <div style="margin-bottom:12px;display:flex;gap:8px">
+        <input id="searchInput" placeholder="Search prompts..." style="flex:1;padding:8px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px" onkeydown="if(event.key==='Enter')loadPrompts()">
+        <button class="btn btn-primary btn-sm" onclick="loadPrompts()">Search</button>
+      </div>
+      <div id="promptList"><div class="empty">Loading...</div></div>
+    </div>
+  </div>
+
+  <div id="sec-create" class="section">
+    <div class="card">
+      <h2>Create New Prompt</h2>
+      <div class="form-group"><label>Name</label><input id="newName" placeholder="Prompt name"></div>
+      <div class="form-group"><label>Description</label><input id="newDesc" placeholder="Description"></div>
+      <div class="form-group"><label>Category</label><input id="newCategory" value="general"></div>
+      <div class="form-group"><label>Template</label><textarea id="newTemplate" placeholder="Jinja2 template content..."></textarea></div>
+      <div class="form-group"><label>System Prompt</label><textarea id="newSystem" rows="3" placeholder="System prompt (optional)"></textarea></div>
+      <div class="form-group"><label>Model Hint</label><input id="newModel" placeholder="e.g. gpt-4" value="gpt-4"></div>
+      <div style="display:flex;gap:8px">
+        <div class="form-group" style="flex:1"><label>Temperature</label><input id="newTemp" type="number" step="0.1" min="0" max="2" value="0.7"></div>
+        <div class="form-group" style="flex:1"><label>Max Tokens</label><input id="newMaxTokens" type="number" value="2048"></div>
+      </div>
+      <button class="btn btn-primary" onclick="createPrompt()">Create Prompt</button>
+    </div>
+  </div>
+
+  <div id="sec-evaluate" class="section">
+    <div class="grid-2">
+      <div class="card">
+        <h2>Run Evaluation</h2>
+        <div class="form-group"><label>Prompt ID</label><input id="evalPromptId" placeholder="Prompt ID"></div>
+        <button class="btn btn-primary" onclick="runEvaluation()" id="evalBtn">Run Evaluation</button>
+      </div>
+      <div class="card">
+        <h2>Evaluation Results</h2>
+        <div id="evalResults"><div class="empty">Run an evaluation to see results.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="sec-abtests" class="section">
+    <div class="card">
+      <h2>A/B Tests</h2>
+      <div id="abTestList"><div class="empty">Loading...</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = '';
+
+function switchSection(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('sec-' + name).classList.add('active');
+  event.target.classList.add('active');
+  if (name === 'prompts') loadPrompts();
+  if (name === 'abtests') loadABTests();
+}
+
+async function loadStats() {
+  try {
+    const r = await fetch(API + '/api/stats');
+    const d = await r.json();
+    document.getElementById('statPrompts').textContent = d.total_prompts;
+    document.getElementById('statVersions').textContent = d.total_versions;
+    document.getElementById('statEvals').textContent = d.total_evaluations;
+    document.getElementById('statTests').textContent = d.total_ab_tests;
+  } catch (e) {}
+}
+
+async function loadPrompts() {
+  const search = document.getElementById('searchInput').value.trim();
+  let url = API + '/api/prompts';
+  if (search) url += '?search=' + encodeURIComponent(search);
+  try {
+    const r = await fetch(url);
+    const prompts = await r.json();
+    const div = document.getElementById('promptList');
+    if (prompts.length === 0) {
+      div.innerHTML = '<div class="empty">No prompts found.</div>';
+      return;
+    }
+    div.innerHTML = prompts.map(p => {
+      const statusCls = 'badge-' + p.status;
+      return `<div class="prompt-card" onclick="selectPrompt('${p.id}')">
+        <div class="name">${p.name} <span class="badge ${statusCls}">${p.status}</span></div>
+        <div class="meta">${p.category} | v${p.current_version} | ${p.tags.join(', ') || 'No tags'} | ${p.description || 'No description'}</div>
+      </div>`;
+    }).join('');
+  } catch (e) {
+    document.getElementById('promptList').innerHTML = '<div class="empty">Error loading prompts.</div>';
+  }
+}
+
+async function selectPrompt(id) {
+  try {
+    const r = await fetch(API + '/api/prompts/' + id);
+    const p = await r.json();
+    alert(`Prompt: ${p.name}\nID: ${p.id}\nVersion: ${p.current_version}\nStatus: ${p.status}\n\nTemplate:\n${p.template.substring(0, 200)}...`);
+    document.getElementById('evalPromptId').value = id;
+  } catch (e) {}
+}
+
+async function createPrompt() {
+  const name = document.getElementById('newName').value.trim();
+  if (!name) return alert('Please enter prompt name');
+  const body = {
+    name,
+    description: document.getElementById('newDesc').value,
+    category: document.getElementById('newCategory').value,
+    template: document.getElementById('newTemplate').value,
+    system_prompt: document.getElementById('newSystem').value,
+    model_hint: document.getElementById('newModel').value,
+    temperature: parseFloat(document.getElementById('newTemp').value),
+    max_tokens: parseInt(document.getElementById('newMaxTokens').value),
+  };
+  try {
+    const r = await fetch(API + '/api/prompts', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
+    const d = await r.json();
+    if (r.ok) {
+      alert('Prompt created: ' + d.id);
+      loadStats();
+      switchSection('prompts');
+    } else {
+      alert('Error: ' + JSON.stringify(d));
+    }
+  } catch (e) { alert('Error: ' + e.message); }
+}
+
+async function runEvaluation() {
+  const id = document.getElementById('evalPromptId').value.trim();
+  if (!id) return alert('Please enter prompt ID');
+  const btn = document.getElementById('evalBtn');
+  btn.innerHTML = '<span class="spinner"></span> Evaluating...';
+  btn.disabled = true;
+  try {
+    const r = await fetch(API + '/api/prompts/' + id + '/evaluate', {method:'POST', headers:{'Content-Type':'application/json'}, body:'{}'});
+    const d = await r.json();
+    if (!r.ok) { alert('Error: ' + JSON.stringify(d)); return; }
+    const div = document.getElementById('evalResults');
+    div.innerHTML = `<div style="margin-bottom:8px">Evaluations: ${d.total_evaluations}</div>`;
+    for (const [metric, score] of Object.entries(d.average_scores)) {
+      const pct = (score * 100).toFixed(1);
+      const color = score > 0.7 ? 'var(--green)' : score > 0.5 ? 'var(--orange)' : 'var(--red)';
+      div.innerHTML += `
+        <div class="score-bar">
+          <span style="width:100px;font-size:12px">${metric}</span>
+          <div class="bar"><div class="fill" style="width:${pct}%;background:${color}"></div></div>
+          <span class="score-val">${pct}%</span>
+        </div>`;
+    }
+    loadStats();
+  } catch (e) { alert('Error: ' + e.message); }
+  finally { btn.innerHTML = 'Run Evaluation'; btn.disabled = false; }
+}
+
+async function loadABTests() {
+  try {
+    const r = await fetch(API + '/api/ab-tests');
+    const tests = await r.json();
+    const div = document.getElementById('abTestList');
+    if (tests.length === 0) {
+      div.innerHTML = '<div class="empty">No A/B tests found.</div>';
+      return;
+    }
+    div.innerHTML = `<table>
+      <thead><tr><th>Name</th><th>Status</th><th>Variants</th><th>Winner</th><th>Created</th></tr></thead>
+      <tbody>${tests.map(t => `<tr>
+        <td>${t.name}</td>
+        <td><span class="badge badge-${t.status === 'completed' ? 'active' : 'draft'}">${t.status}</span></td>
+        <td>${t.variants_count}</td>
+        <td>${t.winner_variant_idx !== null ? 'Variant ' + (t.winner_variant_idx + 1) : '-'}</td>
+        <td>${new Date(t.created_at).toLocaleDateString()}</td>
+      </tr>`).join('')}</tbody>
+    </table>`;
+  } catch (e) {
+    document.getElementById('abTestList').innerHTML = '<div class="empty">Error loading tests.</div>';
+  }
+}
+
+loadStats();
+loadPrompts();
+</script>
+</body>
+</html>
