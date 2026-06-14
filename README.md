@@ -1,18 +1,31 @@
-# Prompt 工程平台
+<div align="center">
 
-> Prompt 工程平台：模板管理、版本控制、A/B 测试、评估引擎
+<img src="assets/banner.svg" width="100%" alt="Prompt 工程平台">
 
-`Python` `FastAPI` `SQLite`
+<br>
+
+### ✍️ Prompt 工程平台
+
+[![Stars](https://img.shields.io/github/stars/dirjaker/prompt_engineering?style=flat-square&label=Stars&color=FFD700)](https://github.com/dirjaker/prompt_engineering/stargazers)
+[![Forks](https://img.shields.io/github/forks/dirjaker/prompt_engineering?style=flat-square&label=Forks&color=4A90D9)](https://github.com/dirjaker/prompt_engineering/network/members)
+[![Contributors](https://img.shields.io/github/contributors/dirjaker/prompt_engineering?style=flat-square&label=Contributors&color=8B4513)](https://github.com/dirjaker/prompt_engineering/graphs/contributors)
+[![License](https://img.shields.io/github/license/dirjaker/prompt_engineering?style=flat-square&label=License&color=20B2AA)](https://github.com/dirjaker/prompt_engineering/blob/dev/LICENSE)
+
+</div>
 
 ---
 
 ## ✨ 功能特性
 
-- 模板管理
-- 版本控制
-- A/B测试
-- 评估引擎
-- 效果分析
+| 功能 | 描述 |
+|------|------|
+| 📝 **模板管理** | Prompt 模板的创建、编辑、分类管理 |
+| 🔄 **版本控制** | Prompt 版本历史和回滚机制 |
+| ⚖️ **A/B 测试** | 两个 Prompt 版本的效果对比测试 |
+| 📊 **评估引擎** | 自动化评估 Prompt 的输出质量 |
+| 👥 **协作编辑** | 团队协作编辑和评审 Prompt |
+| 📈 **效果分析** | Prompt 性能指标统计和可视化 |
+
 
 ## 🚀 快速开始
 
@@ -32,26 +45,36 @@ pip install -r requirements.txt
 python main.py
 ```
 
-## 📁 项目结构
-
-```
-prompt_engineering/
-├── ...
-└── README.md
-```
-
 ## 🛠️ 技术栈
 
-Python, FastAPI, SQLite
+| 层级 | 技术 |
+|------|------|
+| **后端** | FastAPI, SQLAlchemy |
+| **前端** | Vue.js, Naive UI |
+| **评估** | Python, LLM API |
+| **数据库** | SQLite |
 
-## 📝 标签
+## 📝 开发日志
 
-`prompt` `engineering` `template` `evaluation` `python` `fastapi`
+- [x] 模板管理系统
+- [x] 版本控制
+- [x] A/B 测试框架
+- [x] 评估引擎
+- [x] CLI 工具
+- [ ] Web 编辑器
+- [ ] 团队协作功能
+- [ ] 更多评估指标
 
 ## 📄 许可证
 
-MIT License
+[MIT License](LICENSE)
 
 ---
 
+<div align="center">
+
 🔗 **GitHub**: [dirjaker/prompt_engineering](https://github.com/dirjaker/prompt_engineering)
+
+⭐ 如果这个项目对你有帮助，请给一个 Star 支持一下！
+
+</div>
